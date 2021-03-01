@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:mvc="http://www.springframework.org/schema/mvc" 
+	xmlns:p="http://www.springframework.org/schema/p"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:util="http://www.springframework.org/schema/util" 
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans  
+            http://www.springframework.org/schema/beans/spring-beans-3.2.xsd  
+            http://www.springframework.org/schema/context   
+            http://www.springframework.org/schema/context/spring-context-3.2.xsd  
+            http://www.springframework.org/schema/mvc  
+            http://www.springframework.org/schema/mvc/spring-mvc-3.2.xsd 
+            http://www.springframework.org/schema/util  
+            http://www.springframework.org/schema/util/spring-util-3.2.xsd">    
+    <!-- 当配置了mvc:annotation-driven/后，Spring就知道了我们启用注解驱动。然后Spring通过
+    context:component-scan/标签的配置，会自动为我们将扫描到的@Component，@Controller，@Service，
+    @Repository等注解标记的组件注册到工厂中，来处理我们的请求。
+	如果在web.xml中servlet-mapping的url-pattern设置的是/，而不是如.do。表示将所有的文件，
+	包含静态资源文件都交给spring mvc处理。就需要用到<mvc:annotation-driven />了。如果不加，
+	DispatcherServlet则无法区分请求是资源文件还是mvc的注解，而导致controller的请求报404错误。-->        
+    <mvc:annotation-driven />   
+     
+    <!-- 在springMVC-servlet.xml中配置<mvc:default-servlet-handler />后，
+    会在Spring MVC上下文中定义一个org.springframework.web.servlet.resource.
+    DefaultServletHttpRequestHandler，它会像一个检查员，对进入DispatcherServlet的URL进行筛查，
+    如果发现是静态资源的请求，就将该请求转由Web应用服务器默认的Servlet处理，如果不是静态资源的请求，
+    才由DispatcherServlet继续处理。
+    一般Web应用服务器默认的Servlet名称是"default"，因此DefaultServletHttpRequestHandler可以找到它。
+    如果你所有的Web应用服务器的默认Servlet名称不是"default"，则需要通过default-servlet-name属性显示指定：
+    <mvc:default-servlet-handler default-servlet-name="所使用的Web服务器默认使用的Servlet名称" /> -->     
+    <mvc:default-servlet-handler/>
+    
+    <!-- 扫描controller包 -->
+	<context:component-scan base-package="com.web.oa.controller"></context:component-scan>
+	<context:component-scan base-package="com.web.oa.utils"></context:component-scan>
+	
+    <!-- 视图解析器 -->
+    <bean class="org.springframework.web.servlet.view.InternalResourceViewResolver">
+	    <property name="prefix" value="/"></property>
+	    <property name="suffix" value=".jsp"></property>
+    </bean>
+    
+    <!-- 文件上传 -->
+    <bean id="multipartResolver" class="org.springframework.web.multipart.commons.CommonsMultipartResolver">
+    	<property name="maxUploadSize" value="104857600"></property><!-- 100M -->
+    	<property name="maxInMemorySize" value="4096"></property><!-- 4k -->
+    	<property name="defaultEncoding" value="UTF-8"></property>
+    </bean>
+</beans>
